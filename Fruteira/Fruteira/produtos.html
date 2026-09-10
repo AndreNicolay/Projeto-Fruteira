@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+     <header>
+    <h1><img src="img/conceito-de-design-de-logotipo-de-alimentos-saudaveis_761413-8028.avif" alt="Logo da Fruteira"> Fruteira Online</h1>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="clientes.html">Clientes</a>
+        <a href="pedidos.html">Pedidos</a>
+    </nav>
+    </header>
+
+    <input type="text" id="nome" placeholder="Nome">
+
+    <input
+        type="number"
+        id="preco"
+        min="0"
+        step="0.01"
+        placeholder="Preço"
+        required>
+
+    <input
+        type="number"
+        id="estoque"
+        min="0"
+        step="1"
+        placeholder="Estoque"
+        required>
+
+    <input
+        type="number"
+        id="categoriaId"
+        min="1"
+        step="1"
+        placeholder="ID da categoria"
+        required>
+
+    <button onclick="cadastrarProduto()">
+        Salvar Produto
+    </button>
+
+    <h2>Produtos Cadastrados</h2>
+
+    <div id="listaProdutos"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="api.js"></script>
+
+
+</body>
+</html>
