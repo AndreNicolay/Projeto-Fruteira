@@ -32,5 +32,43 @@ namespace Fruteira.Controllers
 
             return CreatedAtAction(nameof(GetClientes), new { id = cliente.Id }, cliente);
         }
+
+        // 3. EDITAR CLIENTES (PUT)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditarCliente(int id, Cliente cliente)
+        {
+            if (id != cliente.Id)
+                return BadRequest("ID do cliente não confere.");
+
+            _context.Entry(cliente).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Clientes.Any(e => e.Id == id))
+                    return NotFound();
+                else
+                    throw;
+            }
+
+            return NoContent();
+        }
+
+        // 4. DELETAR CLIENTES (DELETE)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> ExcluirCliente(int id)
+        {
+            var cliente = await _context.Clientes.FindAsync(id);
+            if (cliente == null)
+                return NotFound();
+
+            _context.Clientes.Remove(cliente);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

@@ -9,6 +9,6 @@ namespace Fruteira.Models // Troque "SeuProjeto" pelo nome real do seu projeto
 
         // Propriedade de navegação (Uma categoria tem vários produtos)
         [JsonIgnore]
-        public List<Produto> Produtos { get; set; } = new List<Produto>();
+        public List<Produto> Produtos { get; set; } = new();
     }
 }

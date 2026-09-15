@@ -21,8 +21,9 @@ namespace Fruteira.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Produto>>> GetProdutos()
         {
-            // O .Include() faz um JOIN com a tabela Categoria para trazer os dados dela junto
-            return await _context.Produtos.Include(p => p.Categoria).ToListAsync();
+            return await _context.Produtos
+                .Include(p => p.Categoria)
+                .ToListAsync();
         }
 
         // 2. CADASTRAR PRODUTO (POST)
