@@ -23,7 +23,6 @@ namespace Fruteira.Controllers
             return await _context.Clientes.ToListAsync();
         }
 
-        // 2. CADASTRAR CLIENTE (POST)
         [HttpPost]
         public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
         {
