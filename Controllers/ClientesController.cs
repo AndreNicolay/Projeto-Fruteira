@@ -16,23 +16,29 @@ namespace Fruteira.Controllers
             _context = context;
         }
 
-        // 1. CONSULTAR CLIENTES (GET)
+        // GET /api/Clientes  ou  /api/Clientes?apenasAtivos=true
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
+        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes([FromQuery] bool apenasAtivos = false)
         {
-            return await _context.Clientes.ToListAsync();
+            var query = _context.Clientes.AsQueryable();
+
+            if (apenasAtivos)
+                query = query.Where(c => c.Status); // Status = 1
+
+            return await query.OrderBy(c => c.Nome).ToListAsync();
         }
 
         [HttpPost]
         public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
         {
+            cliente.Status = true; // todo cliente novo começa ativo
+
             _context.Clientes.Add(cliente);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetClientes), new { id = cliente.Id }, cliente);
         }
 
-        // 3. EDITAR CLIENTES (PUT)
         [HttpPut("{id}")]
         public async Task<IActionResult> EditarCliente(int id, Cliente cliente)
         {
@@ -47,26 +53,31 @@ namespace Fruteira.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Clientes.Any(e => e.Id == id))
+                if (!await _context.Clientes.AnyAsync(e => e.Id == id))
                     return NotFound();
-                else
-                    throw;
+                throw;
             }
 
             return NoContent();
         }
 
-        // 4. DELETAR CLIENTES (DELETE)
         [HttpDelete("{id}")]
         public async Task<IActionResult> ExcluirCliente(int id)
         {
             var cliente = await _context.Clientes.FindAsync(id);
             if (cliente == null)
-                return NotFound();
+                return NotFound("Cliente não encontrado.");
+
+            // Cliente com pedidos: inativa (Status = 0) em vez de apagar
+            if (await _context.Pedidos.AnyAsync(p => p.ClienteId == id))
+            {
+                cliente.Status = false;
+                await _context.SaveChangesAsync();
+                return Ok("Este cliente possui pedidos e foi marcado como Inativo.");
+            }
 
             _context.Clientes.Remove(cliente);
             await _context.SaveChangesAsync();
-
             return NoContent();
         }
     }

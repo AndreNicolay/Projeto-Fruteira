@@ -31,9 +31,11 @@ namespace Fruteira
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseMySql(
                     connectionString,
-                    ServerVersion.AutoDetect(connectionString)));
-
-            // ... outros serviços
+                    new MariaDbServerVersion(new Version(11, 4)), // versão do alwaysdata
+                    mysqlOptions => mysqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(5),
+                        errorNumbersToAdd: null)));
 
             var app = builder.Build();
 
@@ -42,9 +44,10 @@ namespace Fruteira
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
-            // Middlewares (após o build)
-            app.UseHttpsRedirection();
+            else
+            {
+                app.UseHttpsRedirection();
+            }
 
             // USAR O CORS AQUI
             app.UseCors("Liberado");

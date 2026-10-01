@@ -1,6 +1,4 @@
-﻿using Fruteira.Models;
-
-namespace Fruteira.Models
+﻿namespace Fruteira.Models
 {
     public class Pedido
     {
@@ -15,5 +13,8 @@ namespace Fruteira.Models
         public int Quantidade { get; set; }
         public decimal PrecoUnitario { get; set; }
         public DateTime DataPedido { get; set; } = DateTime.Now;
+
+        // TINYINT NOT NULL: 1 = Concluído, 0 = Cancelado
+        public bool Status { get; set; } = true;
     }
 }

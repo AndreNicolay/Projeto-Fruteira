@@ -31,10 +31,17 @@ namespace Fruteira.Controllers
         [HttpPost]
         public async Task<ActionResult<Pedido>> PostPedido(PedidoCreateDto dto)
         {
-            var clienteExiste = await _context.Clientes.AnyAsync(c => c.Id == dto.ClienteId);
-            if (!clienteExiste)
+            // Busca o cliente completo (não só "se existe")
+            var cliente = await _context.Clientes.FindAsync(dto.ClienteId);
+            if (cliente == null)
             {
                 return BadRequest("Cliente não encontrado.");
+            }
+
+            // Status = 0 → cliente inativo
+            if (!cliente.Status)
+            {
+                return BadRequest($"O cliente {cliente.Nome} está inativo e não pode fazer pedidos.");
             }
 
             var produto = await _context.Produtos.FindAsync(dto.ProdutoId);
@@ -54,7 +61,8 @@ namespace Fruteira.Controllers
                 ProdutoId = dto.ProdutoId,
                 Quantidade = dto.Quantidade,
                 PrecoUnitario = produto.Preco,
-                DataPedido = DateTime.Now
+                DataPedido = DateTime.Now,
+                Status = true // Concluído
             };
 
             produto.QuantidadeEstoque -= dto.Quantidade;
